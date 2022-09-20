@@ -19,19 +19,19 @@ class GithubRepoViewModel(private val app: Application,
                           private val getGithubRepoUseCase: GetGithubRepoUseCase):AndroidViewModel(app) {
     val githubrepoList: MutableLiveData<GitRepoListPojo> = MutableLiveData()
     fun getGithubRepo(user_name:String) = viewModelScope.launch(Dispatchers.IO) {
-        var githubrepoLista:GitRepoListPojo = GitRepoListPojo(null,"","error")
+        var githubrepodata:GitRepoListPojo = GitRepoListPojo(null,"","error")
         try{
             if(isNetworkAvailable(app)) {
 
                 val apiResult = getGithubRepoUseCase.execute(user_name)
-               githubrepoLista = GitRepoListPojo(apiResult.data,"Sucess","error")
-                githubrepoList.postValue(githubrepoLista)
+                githubrepodata = GitRepoListPojo(apiResult.data,"Sucess","error")
+                githubrepoList.postValue(githubrepodata)
             }else{
-                githubrepoList.postValue(githubrepoLista)
+                githubrepoList.postValue(githubrepodata)
             }
 
         }catch (e:Exception){
-            githubrepoList.postValue(githubrepoLista)
+            githubrepoList.postValue(githubrepodata)
         }
 
     }

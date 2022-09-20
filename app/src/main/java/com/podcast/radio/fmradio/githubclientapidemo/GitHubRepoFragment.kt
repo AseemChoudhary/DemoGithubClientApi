@@ -38,9 +38,9 @@ class GitHubRepoFragment : Fragment() {
         viewModel.githubrepoList.observe(viewLifecycleOwner,{response->
            if(response.sucess === "Sucess") {
                response.let {
-                   Toast.makeText(activity, "came here ${it.githubRepos?.size}", Toast.LENGTH_LONG)
+                   Toast.makeText(activity, "came here ${it.githubRepo?.size}", Toast.LENGTH_LONG)
                        .show()
-                   Log.i("MYTAG", "came here ${it?.githubRepos?.size}")
+                   Log.i("MYTAG", "came here ${it?.githubRepo?.size}")
                }
            }
             else {

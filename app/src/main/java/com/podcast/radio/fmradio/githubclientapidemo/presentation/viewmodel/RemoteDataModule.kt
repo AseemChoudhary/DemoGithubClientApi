@@ -1,8 +1,8 @@
 package com.podcast.radio.fmradio.githubclientapidemo.presentation.viewmodel
 
 import com.podcast.radio.fmradio.githubclientapidemo.data.api.GitRepoService
-import com.podcast.radio.fmradio.githubclientapidemo.repository.GitHubRepoRemoteDataSource
-import com.podcast.radio.fmradio.githubclientapidemo.repository.GithubRepoRemoteDataSourceImpl
+import com.podcast.radio.fmradio.githubclientapidemo.repository.datasource.GitHubRepoRemoteDataSource
+import com.podcast.radio.fmradio.githubclientapidemo.repository.datasourceImpl.GithubRepoRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,9 +15,9 @@ class RemoteDataModule {
 
     @Singleton
     @Provides
-    fun provideNewsRemoteDataSource(
+    fun provideGitHubRepoRemoteDataSource(
         gitRepoService: GitRepoService
-    ):GitHubRepoRemoteDataSource{
+    ): GitHubRepoRemoteDataSource {
         return GithubRepoRemoteDataSourceImpl(gitRepoService)
     }
 

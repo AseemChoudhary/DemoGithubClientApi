@@ -1,4 +1,4 @@
-package com.podcast.radio.fmradio.githubclientapidemo.repository
+package com.podcast.radio.fmradio.githubclientapidemo.repository.datasource
 
 import com.podcast.radio.fmradio.githubclientapidemo.data.api.model.githubrepo.GitRepoListPojo
 import com.podcast.radio.fmradio.githubclientapidemo.data.api.model.githubrepo.GitRepoListPojoItem
