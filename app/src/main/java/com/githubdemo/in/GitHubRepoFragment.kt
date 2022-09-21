@@ -63,10 +63,10 @@ class GitHubRepoFragment : Fragment() {
                         gitHubRepoListAdapter.differ.submitList(it.githubRepo)
                     }
                 }
-                response.error == RESPONSE_LOADING -> {
+                response.currentState == RESPONSE_LOADING -> {
                     showProgressBar()
                 }
-                response.error == RESPONSE_NO_INTERNET->{
+                response.currentState == RESPONSE_NO_INTERNET->{
                     hideProgressBar()
                     showNoInternetDialog("No Internet","Please check you're internet connection")
                 }

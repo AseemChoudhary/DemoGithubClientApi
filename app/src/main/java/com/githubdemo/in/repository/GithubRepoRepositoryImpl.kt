@@ -22,25 +22,18 @@ class GithubRepoRepositoryImpl(private val gitHubRepoRemoteDataSource: GitHubRep
     override suspend fun getGithubRepoItem(user_name:String): Resource<List<GitRepoListPojoItem>> {
       return getGitHubRepoFromDataBase(user_name)
     }
-    suspend fun getGitHubRepoFromApi(user_name:String): Resource<List<GitRepoListPojoItem>> {
-        lateinit var githubRepoList:Response<List<GitRepoListPojoItem>>
-        try {
-            val response = gitHubRepoRemoteDataSource.getGitHubRepoList(user_name)
-            var body = response.body()
-            if (body != null){
-                sharedPreferences.edit().putLong(CACHE_TIME,System.currentTimeMillis()).apply()
-                gitHubRepoLocalDataSource.saveGitHubRepoToDBList(response.body())
-                githubRepoList = response
-                return responseToResource(githubRepoList,"")
-            }
-        }
-        catch (excetion:Exception){
-            return responseToResource(githubRepoList, RESPONSE_ERROR)
+    private suspend fun getGitHubRepoFromApi(user_name:String): Resource<List<GitRepoListPojoItem>> {
+        val response = gitHubRepoRemoteDataSource.getGitHubRepoList(user_name)
+        sharedPreferences.edit().putLong(CACHE_TIME,System.currentTimeMillis()).apply()
+        gitHubRepoLocalDataSource.saveGitHubRepoToDBList(response.body())
+        return if(response.isSuccessful)
+            listToResource(response.body()!!,"")
+        else{
+            listToResource(ArrayList<GitRepoListPojoItem>(),response.errorBody().toString())
         }
 
-        return responseToResource(githubRepoList,RESPONSE_ERROR)
     }
-    suspend fun getGitHubRepoFromDataBase(user_name:String): Resource<List<GitRepoListPojoItem>> {
+    private suspend fun getGitHubRepoFromDataBase(user_name:String): Resource<List<GitRepoListPojoItem>> {
         var githubRepoItemList:List<GitRepoListPojoItem> = ArrayList<GitRepoListPojoItem>()
         try {
             if (sharedPreferences.contains(CACHE_TIME)) {
@@ -50,37 +43,28 @@ class GithubRepoRepositoryImpl(private val gitHubRepoRemoteDataSource: GitHubRep
                 val minutes = seconds / 60
                 val hours = minutes / 60
                 githubRepoItemList = gitHubRepoLocalDataSource.getSavedGitHubRepoItem()
-                if (hours < 2) {
-                    if (githubRepoItemList.size > 0) {
-                        Log.e("FRom DB","db")
-                        return listToResource(gitHubRepoLocalDataSource.getSavedGitHubRepoItem(),"")
+                return if (hours < 2) {
+                    if (githubRepoItemList.isNotEmpty()) {
+                        Log.e("From DB","db")
+                        listToResource(gitHubRepoLocalDataSource.getSavedGitHubRepoItem(),"")
                     } else {
                         Log.e("From internet","db")
                         gitHubRepoLocalDataSource.deleteAllData()
                         getGitHubRepoFromApi(user_name)
                     }
+                } else {
+                    getGitHubRepoFromApi(user_name)
                 }
-
             }
             else {
-                Log.e("From internet","db")
-                getGitHubRepoFromApi(user_name)
+                return getGitHubRepoFromApi(user_name)
             }
         }catch (e:Exception){
             Log.e("From internet","db")
-            getGitHubRepoFromApi(user_name)
+            return getGitHubRepoFromApi(user_name)
         }
-       return listToResource(githubRepoItemList, RESPONSE_ERROR)
     }
-    private fun responseToResource(response: Response<List<GitRepoListPojoItem>>, errorBody: String): Resource<List<GitRepoListPojoItem>> {
-        if(response.isSuccessful){
-            response.body()?.let {result->
 
-                return Resource.SuccessList(result)
-            }
-        }
-        return Resource.Error(errorBody)
-    }
 
     private fun listToResource(response: List<GitRepoListPojoItem>, errorBody: String): Resource<List<GitRepoListPojoItem>> {
         if(response.isNotEmpty()){

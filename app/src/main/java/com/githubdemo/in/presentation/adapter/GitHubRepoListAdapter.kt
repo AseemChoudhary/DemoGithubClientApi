@@ -16,7 +16,7 @@ class GitHubRepoListAdapter : RecyclerView.Adapter<GitHubRepoListAdapter.GitHubR
 
     private val callback = object : DiffUtil.ItemCallback<GitRepoListPojoItem>(){
         override fun areItemsTheSame(oldItem: GitRepoListPojoItem, newItem: GitRepoListPojoItem): Boolean {
-            return oldItem.url == newItem.url
+            return oldItem.name == newItem.name
         }
 
         override fun areContentsTheSame(oldItem: GitRepoListPojoItem, newItem: GitRepoListPojoItem): Boolean {
