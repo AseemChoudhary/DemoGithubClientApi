@@ -10,7 +10,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.podcast.radio.fmradio.githubclientapidemo"
+        applicationId "com.gihubdemo.in"
         minSdk 21
         targetSdk 32
         versionCode 1

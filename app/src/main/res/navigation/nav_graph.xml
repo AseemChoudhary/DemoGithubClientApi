@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/gitHubRepo"
-        android:name="com.podcast.radio.fmradio.githubclientapidemo.GitHubRepoFragment"
+        android:name="com.githubdemo.in.GitHubRepoFragment"
         android:label="fragment_githubrepo"
         tools:layout="@layout/git_hub_repo_fragment" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/gitHubRepoDetail"
-        android:name="com.podcast.radio.fmradio.githubclientapidemo.GithubRepoDetailFragment"
+        android:name="com.githubdemo.in.GithubRepoDetailFragment"
         android:label="fragment_githubrepo"
         tools:layout="@layout/github_repo_detail_fragment" >
 
