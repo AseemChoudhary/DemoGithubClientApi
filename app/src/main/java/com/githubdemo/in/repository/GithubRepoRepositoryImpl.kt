@@ -61,6 +61,7 @@ class GithubRepoRepositoryImpl(private val gitHubRepoRemoteDataSource: GitHubRep
             }
         }catch (e:Exception){
             Log.e("From internet","db")
+            gitHubRepoLocalDataSource.deleteAllData()
             return getGitHubRepoFromApi(user_name)
         }
     }

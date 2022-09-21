@@ -150,7 +150,7 @@ data class GitRepoListPojoItem(
     @SerializedName("updated_at")
     var updatedAt: String?,
     @SerializedName("url")
-    var strurl: String?,
+    var url: String?,
     @SerializedName("visibility")
     var visibility: String?,
     @SerializedName("watchers")
@@ -160,6 +160,13 @@ data class GitRepoListPojoItem(
     @SerializedName("web_commit_signoff_required")
     var webCommitSignoffRequired: Boolean
 ) : Serializable {
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        if(url.isNullOrEmpty()){
+            result = 31 * result + url.hashCode()
+        }
+        return result
+    }
     constructor() : this(
         false, "", false, "",
         "", "", "", "",
