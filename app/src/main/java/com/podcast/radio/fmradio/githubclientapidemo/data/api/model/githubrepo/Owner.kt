@@ -1,7 +1,11 @@
 package com.podcast.radio.fmradio.githubclientapidemo.data.api.model.githubrepo
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class Owner(
+
+
     @SerializedName("avatar_url")
     val avatarUrl: String,
     @SerializedName("events_url")
@@ -38,4 +42,6 @@ data class Owner(
     val type: String,
     @SerializedName("url")
     val url: String
-)
+){
+
+}

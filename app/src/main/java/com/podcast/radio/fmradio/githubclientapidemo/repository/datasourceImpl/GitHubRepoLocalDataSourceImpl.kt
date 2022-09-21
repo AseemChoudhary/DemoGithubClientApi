@@ -20,6 +20,10 @@ class GitHubRepoLocalDataSourceImpl(private val gitHubRepoListDao: GitHubRepoLis
     }
 
     override suspend fun deleteGitHubRepoFromDB(gitRepoListPojoItem: GitRepoListPojoItem) {
-        gitHubRepoListDao.getAllGithubItems()
+        gitHubRepoListDao.deleteGithubRepoList(gitRepoListPojoItem)
+    }
+
+    override suspend fun deleteAllData() {
+        gitHubRepoListDao.deleteAllGithubRepoList()
     }
 }

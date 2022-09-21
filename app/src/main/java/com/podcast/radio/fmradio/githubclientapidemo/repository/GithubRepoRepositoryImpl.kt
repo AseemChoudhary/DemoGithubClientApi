@@ -4,12 +4,14 @@ import android.content.Context
 import android.util.Log
 import com.podcast.radio.fmradio.githubclientapidemo.data.api.model.githubrepo.GitRepoListPojoItem
 import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.CACHE_TIME
+import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.RESPONSE_ERROR
 import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.SHAREDPREF_FILENAME
 import com.podcast.radio.fmradio.githubclientapidemo.data.util.Resource
 import com.podcast.radio.fmradio.githubclientapidemo.domain.repository.GithubRepoRepository
 import com.podcast.radio.fmradio.githubclientapidemo.repository.datasource.GitHubRepoLocalDataSource
 import com.podcast.radio.fmradio.githubclientapidemo.repository.datasource.GitHubRepoRemoteDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.ResponseBody
 import retrofit2.Response
 
 class GithubRepoRepositoryImpl(private val gitHubRepoRemoteDataSource: GitHubRepoRemoteDataSource,
@@ -24,25 +26,24 @@ class GithubRepoRepositoryImpl(private val gitHubRepoRemoteDataSource: GitHubRep
     suspend fun getGitHubRepoFromApi(user_name:String):Resource<List<GitRepoListPojoItem>>{
         lateinit var githubRepoList:Response<List<GitRepoListPojoItem>>
         try {
-            var response = gitHubRepoRemoteDataSource.getGitHubRepoList(user_name)
+            val response = gitHubRepoRemoteDataSource.getGitHubRepoList(user_name)
             var body = response.body()
             if (body != null){
-                sharedPreferences.edit().putLong(CACHE_TIME,System.currentTimeMillis()).commit()
+                sharedPreferences.edit().putLong(CACHE_TIME,System.currentTimeMillis()).apply()
                 gitHubRepoLocalDataSource.saveGitHubRepoToDBList(response.body())
                 githubRepoList = response
-                return responseToResource( githubRepoList)
+                return responseToResource(githubRepoList,"")
             }
         }
         catch (excetion:Exception){
-            return responseToResource(githubRepoList)
+            return responseToResource(githubRepoList, RESPONSE_ERROR)
         }
 
-        return responseToResource(githubRepoList)
+        return responseToResource(githubRepoList,RESPONSE_ERROR)
     }
     suspend fun getGitHubRepoFromDataBase(user_name:String):Resource<List<GitRepoListPojoItem>>{
         var githubRepoItemList:List<GitRepoListPojoItem> = ArrayList<GitRepoListPojoItem>()
         try {
-
             if (sharedPreferences.contains(CACHE_TIME)) {
                 val diff: Long =
                     (sharedPreferences.getLong(CACHE_TIME, 0) - System.currentTimeMillis())
@@ -53,40 +54,41 @@ class GithubRepoRepositoryImpl(private val gitHubRepoRemoteDataSource: GitHubRep
                 if (hours < 2) {
                     if (githubRepoItemList.size > 0) {
                         Log.e("FRom DB","db")
-                        return listToResource(gitHubRepoLocalDataSource.getSavedGitHubRepoItem())
+                        return listToResource(gitHubRepoLocalDataSource.getSavedGitHubRepoItem(),"")
                     } else {
-                        Log.e("FRom internet","db")
+                        Log.e("From internet","db")
+                        gitHubRepoLocalDataSource.deleteAllData()
                         getGitHubRepoFromApi(user_name)
                     }
                 }
 
             }
             else {
-                Log.e("FRom internet","db")
+                Log.e("From internet","db")
                 getGitHubRepoFromApi(user_name)
             }
         }catch (e:Exception){
-            Log.e("FRom internet","db")
+            Log.e("From internet","db")
             getGitHubRepoFromApi(user_name)
         }
-       return listToResource(githubRepoItemList)
+       return listToResource(githubRepoItemList, RESPONSE_ERROR)
     }
-    private fun responseToResource(response: Response<List<GitRepoListPojoItem>>):Resource<List<GitRepoListPojoItem>>{
+    private fun responseToResource(response: Response<List<GitRepoListPojoItem>>,errorBody: String):Resource<List<GitRepoListPojoItem>>{
         if(response.isSuccessful){
             response.body()?.let {result->
 
                 return Resource.SuccessList(result)
             }
         }
-        return Resource.Error(response.message())
+        return Resource.Error(errorBody)
     }
 
-    private fun listToResource(response: List<GitRepoListPojoItem>):Resource<List<GitRepoListPojoItem>>{
+    private fun listToResource(response: List<GitRepoListPojoItem>,errorBody: String):Resource<List<GitRepoListPojoItem>>{
         if(response.isNotEmpty()){
             response.let { result->
                 return Resource.SuccessList(result)
             }
         }
-        return Resource.Error("Error")
+        return Resource.Error(errorBody)
     }
 }

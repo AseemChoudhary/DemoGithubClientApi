@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.util.*
 
 @Entity(tableName = "github_item")
@@ -163,7 +164,7 @@ data class GitRepoListPojoItem(
     var watchersCount: Int,
     @ColumnInfo        @SerializedName("web_commit_signoff_required")
     var webCommitSignoffRequired: Boolean
-){
+): Serializable {
 
     constructor():this(false, "", false, "",
         "", "", "", "",

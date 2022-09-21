@@ -5,33 +5,52 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.podcast.radio.fmradio.githubclientapidemo.data.api.model.githubrepo.GitRepoListPojo
-import com.podcast.radio.fmradio.githubclientapidemo.data.api.model.githubrepo.GitRepoListPojoItem
-import com.podcast.radio.fmradio.githubclientapidemo.data.util.Resource
+import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.RESPONSE_ERROR
+import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.RESPONSE_NO_INTERNET
+import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.RESPONSE_LOADING
+import com.podcast.radio.fmradio.githubclientapidemo.data.util.Constant.RESPONSE_SUCESS
 import com.podcast.radio.fmradio.githubclientapidemo.domain.usecase.GetGithubRepoUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GithubRepoViewModel(private val app: Application,
                           private val getGithubRepoUseCase: GetGithubRepoUseCase):AndroidViewModel(app) {
-    val githubrepoList: MutableLiveData<GitRepoListPojo> = MutableLiveData()
+    val gitHubRepoList: MutableLiveData<GitRepoListPojo> = MutableLiveData()
     fun getGithubRepo(user_name:String) = viewModelScope.launch(Dispatchers.IO) {
-        var githubrepodata:GitRepoListPojo = GitRepoListPojo(null,"","error")
+        var gitHubRepoData = GitRepoListPojo(null,"", RESPONSE_LOADING)
+        gitHubRepoList.postValue(gitHubRepoData)
         try{
-            if(isNetworkAvailable(app)) {
-
-                val apiResult = getGithubRepoUseCase.execute(user_name)
-                githubrepodata = GitRepoListPojo(apiResult.data,"Sucess","error")
-                githubrepoList.postValue(githubrepodata)
-            }else{
-                githubrepoList.postValue(githubrepodata)
+            val apiResult = getGithubRepoUseCase.execute(user_name)
+            if(apiResult?.data?.size!! > 0) {
+                gitHubRepoData = GitRepoListPojo(apiResult.data,  RESPONSE_SUCESS , "")
+                gitHubRepoList.postValue(gitHubRepoData)
             }
-
+            else{
+                if(!isNetworkAvailable(app)){
+                    gitHubRepoData = GitRepoListPojo(null,"", RESPONSE_NO_INTERNET)
+                    gitHubRepoList.postValue(gitHubRepoData)
+               //   Toast.makeText(app,"No Internet",Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    gitHubRepoData = GitRepoListPojo(null,"", RESPONSE_ERROR)
+                    gitHubRepoList.postValue(gitHubRepoData)
+                }
+            }
         }catch (e:Exception){
-            githubrepoList.postValue(githubrepodata)
+            if(!isNetworkAvailable(app)){
+                gitHubRepoData = GitRepoListPojo(null,"", RESPONSE_NO_INTERNET)
+                gitHubRepoList.postValue(gitHubRepoData)
+            }else {
+                gitHubRepoData = GitRepoListPojo(null, "", RESPONSE_ERROR)
+                gitHubRepoList.postValue(gitHubRepoData)
+            }
+            }
         }
 
     }
@@ -63,4 +82,3 @@ class GithubRepoViewModel(private val app: Application,
         return false
 
     }
-}

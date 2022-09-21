@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/GithubClientApiDemo/app/src/main/res/layout/activity_main.xml" value="0.1334853090172239" />
+        <entry key="..\:/GithubClientApiDemo/app/src/main/res/layout/git_hub_repo_fragment.xml" value="0.1265625" />
+        <entry key="..\:/GithubClientApiDemo/app/src/main/res/layout/github_repo_detail_fragment.xml" value="0.1265625" />
+        <entry key="..\:/GithubClientApiDemo/app/src/main/res/layout/item_github_repo.xml" value="0.1265625" />
+      </map>
+    </option>
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

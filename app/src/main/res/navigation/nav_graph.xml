@@ -8,11 +8,17 @@
     <fragment
         android:id="@+id/gitHubRepo"
         android:name="com.podcast.radio.fmradio.githubclientapidemo.GitHubRepoFragment"
-        android:label="fragment_news"
+        android:label="fragment_githubrepo"
         tools:layout="@layout/git_hub_repo_fragment" >
-<!--        <action-->
-<!--            android:id="@+id/action_newsFragment_to_infoFragment"-->
-<!--            app:destination="@id/infoFragment" />-->
+        <action
+            android:id="@+id/action_repodetailfrag"
+            app:destination="@id/gitHubRepoDetail" />
     </fragment>
+    <fragment
+        android:id="@+id/gitHubRepoDetail"
+        android:name="com.podcast.radio.fmradio.githubclientapidemo.GithubRepoDetailFragment"
+        android:label="fragment_githubrepo"
+        tools:layout="@layout/github_repo_detail_fragment" >
 
+    </fragment>
 </navigation>

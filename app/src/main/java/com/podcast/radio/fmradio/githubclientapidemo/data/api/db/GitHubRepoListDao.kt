@@ -17,4 +17,7 @@ interface GitHubRepoListDao {
 
     @Delete
     suspend fun deleteGithubRepoList(gitRepoListPojoItem: GitRepoListPojoItem)
+
+    @Query("DELETE FROM github_item")
+    suspend fun deleteAllGithubRepoList()
 }
